@@ -1,34 +1,44 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const AddForum = ({ onClose, onAddForum }) => {
 
-    const [image, setImage] = useState('');
+    const [image_url, setImage_url] = useState('');
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [filePreview, setFilePreview] = useState(null);
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTkwNTU1OTEsInJvbGUiOiJ1c2VyIiwidXNlcklkIjoxMn0.x0Wp6nzrnOvOTEXsvlr_RLhE2t-vJnVqeKhlzDcxGbM'; 
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setImage(file); // Simpan file yang dipilih
+                setImage_url(file); // Simpan file yang dipilih
                 setFilePreview(reader.result); // Tampilkan preview gambar
             };
             reader.readAsDataURL(file); // Membaca file sebagai URL data
         }
     };
 
-    const handleAddForum = () => {
-        onAddForum({ image, name, description });
+    const handleAddForum = async () => {
+        const formData = new FormData();
+        formData.append('image', image_url);
+        formData.append('name', name);
+        formData.append('description', description);
 
-        // Clear inputs after adding forum
-        setImage('');
-        setName('');
-        setDescription('');
-        setFilePreview(null);
-
-        onClose();
+        try {
+            const response = await axios.post('https://dev-capstone.practiceproject.tech/v1/doctors/forums', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            onAddForum(response.data);
+            onClose();
+        } catch (error) {
+            console.error('Error adding forum:', error);
+        }
     };
 
     return (
