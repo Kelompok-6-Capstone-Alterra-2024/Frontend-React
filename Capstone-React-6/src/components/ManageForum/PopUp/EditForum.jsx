@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const EditForum = ({ forum, onClose, onUpdateForum }) => {
     const [editedForum, setEditedForum] = useState({
-        image: forum.image,
+        image: forum.image_url,
         title: forum.name,
         description: forum.description,
     });

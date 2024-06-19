@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import MemberList from './MemberList';
 import EditForum from '../PopUp/EditForum';
-import DeleteForum from '../PopUp/DeleteForum'; // Import DeleteForum component
+import DeleteForum from '../PopUp/DeleteForum'; 
+import axios from 'axios';
 
 const ForumDetails = ({ forum, setShowDetails }) => {
     const [showEditPopup, setShowEditPopup] = useState(false);
-    const [showDeletePopup, setShowDeletePopup] = useState(false); // State untuk menampilkan popup delete
+    const [showDeletePopup, setShowDeletePopup] = useState(false); 
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTkwNTU1OTEsInJvbGUiOiJ1c2VyIiwidXNlcklkIjoxMn0.x0Wp6nzrnOvOTEXsvlr_RLhE2t-vJnVqeKhlzDcxGbM'; 
 
     const handleEditClick = () => {
         setShowEditPopup(true);
@@ -23,14 +25,34 @@ const ForumDetails = ({ forum, setShowDetails }) => {
         setShowDeletePopup(false);
     };
 
-    const handleUpdateForum = (updatedForum) => {
-        // Logika untuk update forum
-        console.log('Update forum:', updatedForum);
+    const handleUpdateForum = async (updatedForum) => {
+        try {
+            const response = await axios.put(`https://dev-capstone.practiceproject.tech/v1/doctors/forums/${forum.forum_id}`, updatedForum, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            console.log('Forum updated:', response.data);
+            setShowEditPopup(false);
+            setShowDetails(false);
+        } catch (error) {
+            console.error('Error updating forum:', error);
+        }
     };
 
-    const handleDeleteForum = (forumId) => {
-        // Logika untuk menghapus forum dengan forumId
-        console.log('Delete forum with ID:', forumId);
+    const handleDeleteForum = async () => {
+        try {
+            const response = await axios.delete(`https://dev-capstone.practiceproject.tech/v1/doctors/forums/${forum.forum_id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            console.log('Forum deleted:', response.data);
+            setShowDeletePopup(false);
+            setShowDetails(false);
+        } catch (error) {
+            console.error('Error deleting forum:', error);
+        }
     };
 
     return (
@@ -52,7 +74,7 @@ const ForumDetails = ({ forum, setShowDetails }) => {
                     </div>
                 </div>
             </div>
-            <MemberList members={forum.memberList} />
+            <MemberList forumId={forum.forum_id} />
 
             {/* Tampilkan popup EditForum */}
             {showEditPopup && (
