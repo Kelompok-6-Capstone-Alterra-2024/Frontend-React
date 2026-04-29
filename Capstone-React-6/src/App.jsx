@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Route, Routes, Navigate } from "react-router-dom"
 import { isAuthenticated } from "./utils/auth"
-import Login from "./pages/Login/Login"
+import Login from "./pages/Login/Login.tsx"
 import Register from "./pages/Register/Register"
 import Homepage from "./pages/Home/Homepage"
 import LandingPage from "./pages/LandingPage/LandingPage"
